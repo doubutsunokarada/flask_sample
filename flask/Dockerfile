@@ -1,10 +1,11 @@
 FROM python:3.9-slim-bullseye
 
-WORKDIR /app
+WORKDIR /usr/src/app
+ENV FLASK_APP=./
+ENV FLASK_ENV=development
+ENV FLASK_DEBUG=1
 
-COPY ./app /app
+COPY ./requirements.txt ./
 
-RUN pip install Flask
-RUN pip install -U PyMySQL
-
-CMD ["python", "index.py"]
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
