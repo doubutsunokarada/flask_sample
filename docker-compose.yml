@@ -2,25 +2,38 @@ version: "3"
 services:
   db:
     image: mysql:5.7
+    container_name: mysql_host
     environment:
       MYSQL_DATABASE: flask_sample
       MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
     ports:
-      - "3306:3306"
-    command: --default-authentication-plugin=mysql_native_password
+      - "3307:3306"
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./database/init:/docker-entrypoint-initdb.d
     networks:
-      - app-net
+      app-net:
+        ipv4_address: 10.254.249.2
   flask:
-    build: ./flask
+    build: 
+      context: ./flask
+    container_name: flask
     ports:
       - "5000:80"
     volumes:
       - ./app:/usr/src/app
     command: flask run -h 0.0.0.0 -p 80
     networks:
-      - app-net
+      app-net:
+        ipv4_address: 10.254.249.3
     depends_on:
       - db
 networks:
   app-net:
     driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.254.249.0/24
