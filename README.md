@@ -1,12 +1,12 @@
 # flask_sample
 ## Overview
-Flask+MySQLを利用したwebアプリケーションのサンプル
-
-Debian 11 (bullseye)
-Python 3.9.13
-Flask 2.1.2
-MySQL 5.7
+Flask+MySQLを利用したwebアプリケーションのサンプル<br>
+<br>
+Debian 11 (bullseye)<br>
+Python 3.9.13<br>
+Flask 2.1.2<br>
+MySQL 5.7<br>
 
 ## Install
-`$ docker-compose build`
-`$ docker-compose up -d`
+`$ docker-compose build`<br>
+`$ docker-compose up -d`<br>
