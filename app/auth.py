@@ -1,4 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash
+from flask_login import login_user, logout_user, login_required
+from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.models import User
 from app.database import db
@@ -8,6 +10,21 @@ auth = Blueprint('auth', __name__)
 @auth.route('/login')
 def login():
     return render_template('login.html')
+
+@auth.route('/login', methods=['POST'])
+def login_post():
+    email = request.form.get('email')
+    password = request.form.get('password')
+    remember = True if request.form.get('remember') else False
+    user = User.query.filter_by(email=email).first()
+
+    # ユーザの存在有無 / パスワードのチェック
+    if not user or not check_password_hash(user.password, password):
+        flash('Please check your login details and try again.')
+        return redirect(url_for('auth.login'))
+
+    login_user(user, remember=remember)
+    return redirect(url_for('main.profile'))
 
 @auth.route('/signup')
 def signup():
@@ -22,7 +39,7 @@ def signup_post():
     # ユーザの存在チェック
     user = User.query.filter_by(email=email).first()
     if user:
-        flash('Email address already exists')
+        flash('Email address is already exists')
         return redirect(url_for('auth.signup'))
     
     # ユーザの新規登録
@@ -34,4 +51,5 @@ def signup_post():
 
 @auth.route('/logout')
 def logout():
-    return 'Logout'
+    logout_user()
+    return redirect(url_for('main.index'))

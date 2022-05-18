@@ -1,4 +1,5 @@
 from flask import Flask, make_response, jsonify
+from flask_login import LoginManager
 from flask_cors import CORS
 from .database import db
 
@@ -16,6 +17,16 @@ def create_app():
     })
 
     db.init_app(app)
+
+    login_manager = LoginManager()
+    login_manager.login_view = 'auth.login'
+    login_manager.init_app(app)
+
+    from .models import User
+
+    @login_manager.user_loader
+    def load_user(id):
+        return User.query.get(int(id))
 
     # 認証済みルートのBlueprint
     from .auth import auth as auth_blueprint
